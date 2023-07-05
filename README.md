@@ -1,36 +1,41 @@
-# Amazon Web Services IoT MQTT Subscribe/Publish Example
+# Proyecto AWS IoT
 
-This is an adaptation of the [AWS IoT C SDK](https://github.com/aws/aws-iot-device-sdk-embedded-C) "subscribe_publish" example for ESP-IDF.
+Este proyecto es una aplicación para conectar y comunicarse con AWS IoT utilizando el ESP32. Permite enviar y recibir mensajes a través del protocolo MQTT y controlar un LED según los mensajes recibidos.
 
-# Configuration
+## Configuración
 
-See the README.md in the parent directory for information about configuring the AWS IoT examples.
+Antes de ejecutar el proyecto, asegúrate de realizar las siguientes configuraciones:
 
-# Monitoring MQTT Data from the device
+### Configuración del WiFi
 
-After flashing the example to your ESP32, it should connect to Amazon and start subscribing/publishing MQTT data.
+En el archivo "UsoWifi.h", debes proporcionar la información de tu red WiFi:
 
-The example code publishes MQTT data to the topic `test_topic/esp32`. Amazon provides a web interface to subscribe to MQTT topics for testing:
+- SSID: Nombre de la red WiFi a la que te quieres conectar.
+- Contraseña: Contraseña de la red WiFi.
 
-* On the AWS IoT console, click "MQTT Client" near the top-right.
-* Click "Generate Client ID" to generate a random client ID.
-* Click "Connect"
+### Configuración del Cliente AWS
 
-One connection succeeds, you can subscribe to the data published by the ESP32:
+En el archivo "UsoAws.h", hay una variable llamada "ClienteAWS" que puedes modificar para establecer el nombre de tu cliente AWS. Además, debes configurar los certificados y claves necesarios para la conexión segura con AWS IoT.
 
-* Click "Subscribe to Topic"
-* Enter "Subscription Topic" `test_topic/esp32`
-* Click "Subscribe"
+### Configuración del Host de AWS
 
-... you should see MQTT data published from the running example.
+En el archivo "UsoAws.h", la variable "HostAddress" define la URL del host de AWS IoT. Por defecto, se establece como "a15uddaliiomur-ats.iot.us-east-1.amazonaws.com". Si deseas utilizar una URL diferente, puedes modificarla.
 
-To publish data back to the device:
+## Cómo funciona
 
-* Click "Publish to Topic"
-* Enter "Publish Topic" `test_topic/esp32`
-* Enter a message in the payload field
-* Click Publish
+El programa principal se encuentra en el archivo "subcribe_publish_aws.c" y consta de los siguientes pasos:
 
-# Important Note
+1. Inicialización del sistema de almacenamiento no volátil (NVS).
 
-This example has dependency on `esp-aws-iot` component which is added through `EXTRA_COMPONENT_DIRS` in its `Makefile` or `CMakeLists.txt` (using relative path). Hence if example is moved outside of this repository then this dependency can be resolved by copying `esp_aws_iot` under `components` subdirectory of the example project.
+2. Inicialización de la conexión WiFi llamando a la función "initialise_wifi" en el archivo "UsoWifi.h". Asegúrate de proporcionar los detalles correctos de tu red WiFi.
+
+3. Creación de una tarea llamada "aws_iot_task" utilizando la función "xTaskCreatePinnedToCore" de FreeRTOS. Esta tarea ejecutará la función "aws_iot_task" en el archivo "UsoAws.h" para establecer la conexión y comunicarse con AWS IoT.
+
+## Contribuciones
+
+Siéntete libre de contribuir a este proyecto mediante la apertura de issues o la presentación de pull requests. ¡Tus aportes son bienvenidos!
+
+## Autor
+
+Nombre: Cristian Villamarin beodya
+Contacto: cvillabe@gmail.com
